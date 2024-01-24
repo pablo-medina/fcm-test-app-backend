@@ -24,7 +24,7 @@ const validateApplicationHeader = (req, res, next) => {
 
 async function main() {
     console.log('Cargando configuración...');
-    const fcmClient = new FCMClient(ServerConfig.serviceAccountKey);
+    const fcmClient = new FCMClient(ServerConfig.serviceAccountKey, { messageTTL: ServerConfig.fcm.messages.ttl });
     await fcmClient.init();
 
     console.log('Inicialiando servidor...');
@@ -36,14 +36,15 @@ async function main() {
 
     // Health Check
     app.get('/health', (req, res) => {
-        res.status(200).json({status: 'OK'});
+        res.status(200).json({ status: 'OK' });
     })
 
     // Endpoint para obtener la configuración
     app.get('/firebase-config', validateApplicationHeader, (req, res) => {
+        console.log(`Configuración solicitada por ${req.hostname}...`);
         try {
             const response = Object.assign(ServerConfig.firebaseConfig);
-            console.log('Configuración: ', response);
+            console.log('Configuración enviada.');
             res.json(response);
         } catch (error) {
             console.error('Error al leer el archivo de configuración:', error);
@@ -66,11 +67,11 @@ async function main() {
                     })
                     .catch(error => {
                         console.error('Error al enviar el mensaje:', error);
-                        res.status(500).send({success: false, message: 'Error al enviar mensaje a FCM', detail: error.message});
+                        res.status(500).send({ success: false, message: 'Error al enviar mensaje a FCM', detail: error.message });
                     });
             } catch (error) {
                 console.error('Error al intentar enviar un mensaje', error);
-                res.status(500).send({success: false, message: 'Error al enviar mensaje a FCM', detail: error.message});
+                res.status(500).send({ success: false, message: 'Error al enviar mensaje a FCM', detail: error.message });
             }
         }, _delay);
     });
