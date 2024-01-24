@@ -34,6 +34,11 @@ async function main() {
     app.use(cors());
     app.use(express.json());
 
+    // Health Check
+    app.get('/health', (req, res) => {
+        res.status(200).json({status: 'OK'});
+    })
+
     // Endpoint para obtener la configuración
     app.get('/firebase-config', validateApplicationHeader, (req, res) => {
         try {
