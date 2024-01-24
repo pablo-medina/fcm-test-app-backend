@@ -1,13 +1,8 @@
 const express = require('express');
-const { readFileSync } = require('fs');
 const cors = require('cors');
 const FCMClient = require('./lib/fcm-client.js');
-const ConfigValidator = require('./config-validator.js');
 const chalk = require('chalk');
 const ServerConfig = require('./config.js');
-
-// Validar configuración. Si hay al menos algún error, mostrar los mensajes y salir con código de error 1.
-ConfigValidator.validateOrExit();
 
 const llamarFuncion = (fn, delay) => {
     if (delay > 0) {
@@ -29,7 +24,7 @@ const validateApplicationHeader = (req, res, next) => {
 
 async function main() {
     console.log('Cargando configuración...');
-    const fcmClient = new FCMClient(ServerConfig.serviceAccountKeyPath);
+    const fcmClient = new FCMClient(ServerConfig.serviceAccountKey);
     await fcmClient.init();
 
     console.log('Inicialiando servidor...');
@@ -42,9 +37,7 @@ async function main() {
     // Endpoint para obtener la configuración
     app.get('/firebase-config', validateApplicationHeader, (req, res) => {
         try {
-            const configFile = readFileSync(ServerConfig.clientConfigPath);
-            const configJSON = JSON.parse(configFile);
-            const response = Object.assign(configJSON);
+            const response = Object.assign(ServerConfig.clientConfig);
             console.log('Configuración: ', response);
             res.json(response);
         } catch (error) {

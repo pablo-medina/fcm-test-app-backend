@@ -132,3 +132,6 @@ dist
 # Firebase configuration
 firebase.config.json
 serviceAccountKey.json
+
+# Claves privadas
+keys.js
