@@ -1,15 +1,11 @@
-let clientConfig, serviceAccountKey;
+const { readFileSync } = require('fs');
+const FIREBASE_CONFIG_PATH = 'firebase.config.json';
+const SERVICE_ACCOUNT_KEY_PATH = 'serviceAccountKey.json';
 
-try {
-    keys = require('./keys.js');    
-    clientConfig = keys.clientConfig;    
-    serviceAccountKey = keys.serviceAccountKey;
-} catch (error) {
-    clientConfig = process.env.FIREBASE_CONFIG;
-    serviceAccountKey = process.env.SERVICE_ACCOUNT_KEY;
-}
+const firebaseConfig = readFileSync(FIREBASE_CONFIG_PATH);
+const serviceAccountKey = readFileSync(SERVICE_ACCOUNT_KEY_PATH)
 
-const clientConfigJSON = JSON.parse(clientConfig);
+const firebaseConfigJSON = JSON.parse(firebaseConfig);
 const serviceAccountKeyJSON = JSON.parse(serviceAccountKey);
 
 const ServerConfig = {
@@ -17,7 +13,7 @@ const ServerConfig = {
         appId: process.env.FCM_APP_ID || 'fcm-test-client',
         apiPort: process.env.FCM_API_PORT || 10001
     },
-    clientConfig: clientConfigJSON,
+    firebaseConfig: firebaseConfigJSON,
     serviceAccountKey: serviceAccountKeyJSON
 }
 

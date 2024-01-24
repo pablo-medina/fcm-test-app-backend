@@ -42,7 +42,7 @@ async function main() {
     // Endpoint para obtener la configuración
     app.get('/firebase-config', validateApplicationHeader, (req, res) => {
         try {
-            const response = Object.assign(ServerConfig.clientConfig);
+            const response = Object.assign(ServerConfig.firebaseConfig);
             console.log('Configuración: ', response);
             res.json(response);
         } catch (error) {
